@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f59bb42b1f00eb49b26b5416de0a055, type: 3}
+  m_Name: GenericInputDefinition
+  m_EditorClassIdentifier: 
+  inputs:
+  - name: 236w
+    steps:
+    - input: 2
+      nextStepMaximumFrames: 5
+    - input: 3
+      nextStepMaximumFrames: 10
+    - input: 6
+      nextStepMaximumFrames: 9
+    button: Weapon
