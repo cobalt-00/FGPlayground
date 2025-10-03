@@ -27,15 +27,23 @@ public class InputProcessor : MonoBehaviour
     private Dictionary<string, int> HeldInputs = new Dictionary<string, int>();
     private Vector2 stickPosition;
 
-    private List<Frame> frames;
+    private List<Frame> frames = new List<Frame>();
+
+    private void Start()
+    {
+        frames = new List<Frame>();
+        HeldInputs = new Dictionary<string, int>();
+        stickPosition = Vector2.zero;
+    }
 
     private void FixedUpdate()
     {
         if (frames.Count == INPUT_STORE_BUFFER_LENGTH)
         {
+            //hopefully this isnt a ridiculous performance hit; might want do something funkier with overwriting f0 and reindexing to f20
             frames.RemoveAt(0);
-            frames.Add(new Frame(HeldInputs, stickPosition));
         }
+        frames.Add(new Frame(HeldInputs, stickPosition));
 
         CheckMotions();
     }
