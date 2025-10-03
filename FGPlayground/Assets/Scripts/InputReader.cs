@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,8 +17,9 @@ public class InputReader : MonoBehaviour
     //ref: https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.Users.InputUser.html
     private void Init(/*eventually want to initalize this per specific device with an input user*/)
     {
+        
         var input = GetComponent<PlayerInput>();
-        InputRebindUtil.SaveInputs();
+        InputRebindUtil.SaveInputs(new InputUser());
         inputProcesser = GetComponent<InputProcessor>();
     }
 

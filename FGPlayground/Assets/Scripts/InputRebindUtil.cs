@@ -3,6 +3,7 @@ using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 using static UnityEngine.Rendering.DebugUI;
 
 
@@ -10,20 +11,20 @@ using static UnityEngine.Rendering.DebugUI;
  
 public class InputRebindUtil
 {
-    private static string DataPath = Application.persistentDataPath + "/inputBinds.json";
+    private static string DataPath(InputUser user) => Application.persistentDataPath + "/inputBinds_" + user.id + ".json";
 
-    public static bool SaveInputs()
+    public static bool SaveInputs(InputUser user)
     {
         var inputJson = InputSystem.actions.SaveBindingOverridesAsJson();
         byte[] inputBytes = new UTF8Encoding(true).GetBytes(inputJson);
         //clear old inputs first
-        if (File.Exists(DataPath))
+        if (File.Exists(DataPath(user)))
         {
-            File.Delete(DataPath);
+            File.Delete(DataPath(user));
         }
 
         //save new inputs
-        using (FileStream file = File.Create(DataPath))
+        using (FileStream file = File.Create(DataPath(user)))
         {
             file.Write(inputBytes, 0, inputBytes.Length);
         }
@@ -31,11 +32,11 @@ public class InputRebindUtil
         return true;
     }
 
-    public static bool LoadInputs()
+    public static bool LoadInputs(InputUser user)
     {
-        if (File.Exists(DataPath))
+        if (File.Exists(DataPath(user)))
         {
-            string inputString = File.ReadAllText(DataPath);
+            string inputString = File.ReadAllText(DataPath(user));
 
             InputSystem.actions.LoadBindingOverridesFromJson(inputString);
             return true;
