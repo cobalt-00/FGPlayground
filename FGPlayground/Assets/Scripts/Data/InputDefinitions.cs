@@ -16,6 +16,7 @@ public struct InputStep
 {
     public string input;
     public int nextStepMaximumFrames;
+    public int requiredHeldFrames;
 }
 
 [CreateAssetMenu(fileName = "InputDefinitions", menuName = "Scriptable Objects/InputDefinitions")]

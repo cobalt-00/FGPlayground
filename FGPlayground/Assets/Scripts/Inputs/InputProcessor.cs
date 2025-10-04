@@ -12,13 +12,13 @@ using UnityEngine.Windows;
 
 public struct Frame
 {
-    public Frame(Dictionary<string, int> inputs, Vector2 stickPosition)
+    public Frame(Dictionary<string, int> inputs, ValueTuple<Vector2, int> stickPosition)
     { 
         this.inputs = inputs;
         this.stickPosition = stickPosition;
     }
     public Dictionary<string, int> inputs;
-    public Vector2 stickPosition;
+    public ValueTuple<Vector2, int> stickPosition;
 }
 
 public class InputProcessor : MonoBehaviour
@@ -28,7 +28,7 @@ public class InputProcessor : MonoBehaviour
 
     private InputUser user; //serves as our unique id
     private Dictionary<string, int> CurrentInputs = new Dictionary<string, int>();
-    private Vector2 stickPosition;
+    private ValueTuple<Vector2, int> stickPosition;
 
     private List<Frame> frames = new List<Frame>();
 
@@ -40,7 +40,7 @@ public class InputProcessor : MonoBehaviour
     {
         frames = new List<Frame>();
         CurrentInputs = new Dictionary<string, int>();
-        stickPosition = Vector2.zero;
+        stickPosition = ValueTuple.Create(Vector2.zero, 0);
     }
 
     private void FixedUpdate()
@@ -56,8 +56,9 @@ public class InputProcessor : MonoBehaviour
         //then increment the number of frames each input has been held for (important for tracking charge inputs)
         foreach (var input in CurrentInputs.Keys.ToList())
         {
-            CurrentInputs[input]+= 1;
+            ++CurrentInputs[input];
         }
+        ++stickPosition.Item2;
 
         CheckMotions();
     }
@@ -94,7 +95,8 @@ public class InputProcessor : MonoBehaviour
                 }
 
                 //remove from the front until we run out of non-matching frames
-                var nonMatching = searchableFrames.TakeWhile(frame => Vec2ToNumpad(frame.stickPosition) != step.input);
+                var nonMatching = searchableFrames.TakeWhile(frame => Vec2ToNumpad(frame.stickPosition.Item1) != step.input 
+                                                            || step.requiredHeldFrames > frame.stickPosition.Item2);
                 var recursiveSearchable = searchableFrames.TakeLast(searchableFrames.Count() - nonMatching.Count()).ToList();
                 searchableFrames = recursiveSearchable;
             }
@@ -113,14 +115,14 @@ public class InputProcessor : MonoBehaviour
         var mirrorMult = Mirror ? -1 : 1;
 
         if (input.x * mirrorMult == -1 && input.y == -1) return "1";
-        if (input.x * mirrorMult == 0 * mirrorMult && input.y == -1) return "2";
+        if (input.x * mirrorMult == 0 && input.y == -1) return "2";
         if (input.x * mirrorMult == 1 && input.y == -1) return "3";
-        if (input.x * mirrorMult == -1 * mirrorMult && input.y == 0) return "4";
+        if (input.x * mirrorMult == -1 && input.y == 0) return "4";
         if (input.x * mirrorMult == 0 && input.y == 0) return "5";
         if (input.x * mirrorMult == 1 && input.y == 0) return "6";
         if (input.x * mirrorMult == -1 && input.y == 1) return "7";
-        if (input.x == 0 * mirrorMult && input.y == 1) return "8";
-        if (input.x == 1 * mirrorMult && input.y == 1) return "9";
+        if (input.x * mirrorMult == 0 && input.y == 1) return "8";
+        if (input.x * mirrorMult == 1 && input.y == 1) return "9";
 
         return "5";
 
@@ -132,20 +134,20 @@ public class InputProcessor : MonoBehaviour
     }
     public void ProcessMove(InputValue input)
     {
+        
         if (input.Get() == null)
         {
-            stickPosition = Vector2.zero;
+            stickPosition = ValueTuple.Create(Vector2.zero, 0);
         }
         else
         {
-            stickPosition = (Vector2)input.Get();
+            stickPosition = ValueTuple.Create((Vector2)input.Get(), 0);
         }
-        if (stickPosition.x > 0) stickPosition.x = 1;
-        if (stickPosition.x < 0) stickPosition.x = -1;
-        if (stickPosition.y > 0) stickPosition.y = 1;
-        if (stickPosition.y < 0) stickPosition.y = -1;
-
-        Debug.Log("Move" + input.Get());
+        if (stickPosition.Item1.x > 0) stickPosition.Item1.x = 1;
+        if (stickPosition.Item1.x < 0) stickPosition.Item1.x = -1;
+        if (stickPosition.Item1.y > 0) stickPosition.Item1.y = 1;
+        if (stickPosition.Item1.y < 0) stickPosition.Item1.y = -1;
+        Debug.Log("Move: " + Vec2ToNumpad(stickPosition.Item1));
     }
     public void ProcessInput(string InputName, InputValue input)
     {
