@@ -71,6 +71,10 @@ public class InputProcessor : MonoBehaviour
             {
                 //call the motion
                 Debug.Log("#### Motion achieved!~ " + definition.name);
+                if (definition.ClearMotionQueue)
+                {
+                    frames.Clear();
+                }
                 break;
             }
         }
@@ -79,12 +83,14 @@ public class InputProcessor : MonoBehaviour
     private bool CheckMotion(InputDefinition inputDefinition)
     {
         //first, we see how long we have to check for this input 
-        var total = inputDefinition.steps.Sum(_ => _.nextStepMaximumFrames);
+        var total = Math.Min(INPUT_STORE_BUFFER_LENGTH, inputDefinition.steps.Sum(_ => _.nextStepMaximumFrames));
         //and gather that many frames from the end of the buffer
         var searchableFrames = frames.TakeLast(total).ToList();
 
-        if (searchableFrames.Any(frame => frame.inputs.TryGetValue(inputDefinition.button, out var duration) && duration == 1))
-        { 
+        if (inputDefinition.button == string.Empty || searchableFrames.Any(frame => frame.inputs.TryGetValue(inputDefinition.button, out var duration) && duration == 1))
+        {
+            bool firstInput = true;
+            int nextMaxFrames = INPUT_STORE_BUFFER_LENGTH;
             //we have the button, now check for the motion
             foreach (var step in inputDefinition.steps)
             {
@@ -95,10 +101,27 @@ public class InputProcessor : MonoBehaviour
                 }
 
                 //remove from the front until we run out of non-matching frames
-                var nonMatching = searchableFrames.TakeWhile(frame => Vec2ToNumpad(frame.stickPosition.Item1) != step.input 
-                                                            || step.requiredHeldFrames > frame.stickPosition.Item2);
+                var nonMatching = searchableFrames.TakeWhile(frame => !step.validInputs.Contains(Vec2ToNumpad(frame.stickPosition.Item1))
+                                                            || step.requiredHeldFrames > frame.stickPosition.Item2).ToList();
+                
+                
+                if (nonMatching.Count > nextMaxFrames || nonMatching.Count == searchableFrames.Count)
+                { 
+                    return false; 
+                }
+
                 var recursiveSearchable = searchableFrames.TakeLast(searchableFrames.Count() - nonMatching.Count()).ToList();
                 searchableFrames = recursiveSearchable;
+
+                //special first input operation
+                if (firstInput && !inputDefinition.RequireStrictFirstInputPress)
+                {
+                    var trimmedSearchable = searchableFrames.TakeWhile(frame => frame.stickPosition.Item2 > 0);
+                    recursiveSearchable = searchableFrames.TakeLast(searchableFrames.Count() - trimmedSearchable.Count()).ToList();
+                    searchableFrames = recursiveSearchable;
+                    firstInput = false;
+                }
+                nextMaxFrames = step.nextStepMaximumFrames;
             }
 
             //if we reach this before running out of frames, we've made the input

@@ -15,61 +15,101 @@ MonoBehaviour:
   inputs:
   - name: 632146b
     steps:
-    - input: 6
+    - validInputs:
+      - 6
       nextStepMaximumFrames: 16
       requiredHeldFrames: 0
-    - input: 2
+    - validInputs:
+      - 1
+      - 2
+      - 3
       nextStepMaximumFrames: 16
       requiredHeldFrames: 0
-    - input: 4
+    - validInputs:
+      - 4
       nextStepMaximumFrames: 16
       requiredHeldFrames: 0
-    - input: 6
+    - validInputs:
+      - 6
       nextStepMaximumFrames: 20
       requiredHeldFrames: 0
     button: Break
+    RequireStrictFirstInputPress: 0
   - name: 623w
     steps:
-    - input: 6
+    - validInputs:
+      - 6
       nextStepMaximumFrames: 8
       requiredHeldFrames: 0
-    - input: 2
+    - validInputs:
+      - 2
       nextStepMaximumFrames: 12
       requiredHeldFrames: 0
-    - input: 3
+    - validInputs:
+      - 3
       nextStepMaximumFrames: 6
       requiredHeldFrames: 0
     button: Weapon
+    RequireStrictFirstInputPress: 0
   - name: 236w
     steps:
-    - input: 2
+    - validInputs:
+      - 2
       nextStepMaximumFrames: 5
       requiredHeldFrames: 0
-    - input: 3
+    - validInputs:
+      - 3
       nextStepMaximumFrames: 10
       requiredHeldFrames: 0
-    - input: 6
+    - validInputs:
+      - 6
       nextStepMaximumFrames: 9
       requiredHeldFrames: 0
     button: Weapon
+    RequireStrictFirstInputPress: 0
   - name: 214w
     steps:
-    - input: 2
+    - validInputs:
+      - 2
       nextStepMaximumFrames: 5
       requiredHeldFrames: 0
-    - input: 1
+    - validInputs:
+      - 1
       nextStepMaximumFrames: 10
       requiredHeldFrames: 0
-    - input: 4
+    - validInputs:
+      - 4
       nextStepMaximumFrames: 9
       requiredHeldFrames: 0
     button: Weapon
+    RequireStrictFirstInputPress: 0
   - name: '[4]6p'
     steps:
-    - input: 4
+    - validInputs:
+      - 1
+      - 4
+      - 7
       nextStepMaximumFrames: 10
       requiredHeldFrames: 30
-    - input: 6
+    - validInputs:
+      - 6
       nextStepMaximumFrames: 10
       requiredHeldFrames: 0
     button: Punch
+    RequireStrictFirstInputPress: 0
+  - name: Backdash
+    steps:
+    - validInputs:
+      - 4
+      nextStepMaximumFrames: 10
+      requiredHeldFrames: 0
+    - validInputs:
+      - 5
+      nextStepMaximumFrames: 10
+      requiredHeldFrames: 0
+    - validInputs:
+      - 4
+      nextStepMaximumFrames: 10
+      requiredHeldFrames: 0
+    button: 
+    RequireStrictFirstInputPress: 1

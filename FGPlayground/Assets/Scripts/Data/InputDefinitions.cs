@@ -9,12 +9,14 @@ public struct InputDefinition
     public string name;
     public List<InputStep> steps;
     public string button;
+    public bool RequireStrictFirstInputPress;
+    public bool ClearMotionQueue;
 }
 
 [System.Serializable]
 public struct InputStep
 {
-    public string input;
+    public string[] validInputs;
     public int nextStepMaximumFrames;
     public int requiredHeldFrames;
 }
